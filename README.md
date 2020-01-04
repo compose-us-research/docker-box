@@ -1,4 +1,4 @@
-# sandbox-docker
+# docker-box
 
 Sandbox apps into a docker container.
 
@@ -6,15 +6,15 @@ Sandbox apps into a docker container.
 
 Copy it into your home directory and make it runnable:
 ```
-mkdir ~/.sandbox
-cp -r . ~/.sandbox
-chmod u+x ~/.sandbox/sandbox*.sh
+mkdir ~/.docker-box
+cp -r . ~/.docker-box
+chmod u+x ~/.docker-box/docker-box*.sh
 ```
 
 Set up aliases in `.*rc` file:
 ```
-alias mountbox="${HOME}/.sandbox/sandbox-static-mount.sh"
-alias box="${HOME}/.sandbox/sandbox.sh"
+alias mountbox="${HOME}/.docker-box/docker-box-static-mount.sh"
+alias box="${HOME}/.docker-box/docker-box.sh"
 ```
 
 Usage for using it inside the current working directory:
