@@ -25,7 +25,6 @@ arguments=""
 for i in "$@"; do
   arguments="$arguments"'"'"$i"'" '
 done
-echo "$arguments"
 
 echo "Running $APP_TO_RUN"
 
