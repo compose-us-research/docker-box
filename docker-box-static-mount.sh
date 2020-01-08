@@ -29,9 +29,13 @@ done
 echo "Running $APP_TO_RUN"
 
 # Run the docker command with properly quoted arguments
-echo docker run \
+COMMAND="""docker run \
        --rm \
        --name "$APP_TO_RUN" \
        --volume "${VOLUME_DIR}:/app" \
+       -it \
        "$IMAGE_NAME" \
-       "$APP_TO_RUN" "$arguments" | sh
+       "$APP_TO_RUN" "$arguments"
+"""
+
+$COMMAND
