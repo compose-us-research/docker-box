@@ -37,4 +37,4 @@ COMMAND="""docker run \
 """
 
 # Run the docker command with properly quoted arguments
-$COMMAND
+bash -c "$COMMAND"
