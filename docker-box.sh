@@ -27,6 +27,8 @@ for i in "$@"; do
 done
 
 echo "Running $APP_TO_RUN"
+
+# Run the docker command with properly quoted arguments
 COMMAND="""docker run \
        --rm \
        --name "$APP_TO_RUN" \
@@ -36,5 +38,4 @@ COMMAND="""docker run \
        "$APP_TO_RUN" "$arguments"
 """
 
-# Run the docker command with properly quoted arguments
 bash -c "$COMMAND"

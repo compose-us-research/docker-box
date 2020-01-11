@@ -38,4 +38,4 @@ COMMAND="""docker run \
        "$APP_TO_RUN" "$arguments"
 """
 
-$COMMAND
+bash -c "$COMMAND"
