@@ -32,7 +32,7 @@ echo "Running $APP_TO_RUN"
 COMMAND="""docker run \
        --rm \
        --name "$APP_TO_RUN" \
-       --network host \
+       -P \
        --volume "${VOLUME_DIR}:/app" \
        -it \
        "$IMAGE_NAME" \
