@@ -23,11 +23,16 @@ done
 
 echo "Running $APP_TO_RUN"
 
+PORT_SETTING=""
+if [ ! -z "$PORT" ]; then
+  PORT_SETTING="-p ${PORT}:${PORT}"
+fi
+
 # Run the docker command with properly quoted arguments
 COMMAND="""docker run \
        --rm \
        --name "$APP_TO_RUN" \
-       -P \
+       ${PORT_SETTING} \
        --volume "${VOLUME_DIR}:/app" \
        -it \
        "$IMAGE_NAME" \
