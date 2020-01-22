@@ -34,5 +34,4 @@ COMMAND="""docker run \
        "$arguments"
 """
 
-echo "$COMMAND"
 bash -c "$COMMAND"
