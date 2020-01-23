@@ -27,7 +27,7 @@ echo "Running $APP_TO_RUN"
 COMMAND="""docker run \
        --rm \
        --name "$APP_TO_RUN" \
-       ${EXTRA_OPTIONS} \
+       ${DOCKER_OPTIONS} \
        --volume "${VOLUME_DIR}:/app" \
        -it \
        "$IMAGE_NAME" \
