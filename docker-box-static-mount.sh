@@ -13,30 +13,37 @@ DOCKERFILE_VERSION=$(md5 -q "$DOCKERFILE")
 IMAGE_NAME="${APP_TO_RUN}:${DOCKERFILE_VERSION}"
 VOLUME_DIR="${SCRIPT_PATH}/sandbox"
 
-# If the docker image does not exist yet, create it
-if ! docker inspect "$IMAGE_NAME" > /dev/null; then
-  echo "Building $IMAGE_NAME"
-  docker build -t "$IMAGE_NAME" -f "$DOCKERFILE" $APP_PATH
-fi
+if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
+  if [ -n "${arguments}" ]; then
+    docker-compose run app "$arguments"
+  else
+    docker-compose up
+  fi
+else
+  # If the docker image does not exist yet, create it
+  if ! docker inspect "$IMAGE_NAME" > /dev/null; then
+    echo "Building $IMAGE_NAME"
+    docker build -t "$IMAGE_NAME" -f "$DOCKERFILE" $APP_PATH
+  fi
 
-# Concatenate all remaining arguments and put them into quotes
-shift
-arguments=""
-for i in "$@"; do
-  arguments="$arguments"'"'"$i"'" '
-done
+  # Concatenate all remaining arguments and put them into quotes
+  shift
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
 
-echo "Running $APP_TO_RUN"
+  echo "Running $APP_TO_RUN"
 
-# Run the docker command with properly quoted arguments
-COMMAND="""docker run \
-       --rm \
-       --name "$APP_TO_RUN" \
-       ${DOCKER_OPTIONS} \
-       --volume "${VOLUME_DIR}:/app" \
-       -it \
-       "$IMAGE_NAME" \
-       "$APP_TO_RUN" "$arguments"
-"""
+  # Run the docker command with properly quoted arguments
+  COMMAND="""docker run \
+         --rm \
+         --name "$APP_TO_RUN" \
+         ${DOCKER_OPTIONS} \
+         --volume "${VOLUME_DIR}:/app" \
+         -it \
+         "$IMAGE_NAME" \
+         "$APP_TO_RUN" "$arguments"
+  """
 
-bash -c "$COMMAND"
+  bash -c "$COMMAND"
