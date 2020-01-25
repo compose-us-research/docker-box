@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-APP_TO_RUN="$1"
 SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd -P )"
 
 if [ -z ${DOCKER_BOX_APPS_PATH+x} ]; then
@@ -14,24 +13,29 @@ IMAGE_NAME="${APP_TO_RUN}:${DOCKERFILE_VERSION}"
 VOLUME_DIR="${SCRIPT_PATH}/sandbox"
 
 if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
+  # Concatenate all remaining arguments and put them into quotes
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
   if [ -n "${arguments}" ]; then
-    docker-compose run app "$arguments"
+    COMMAND="""docker-compose run --service-ports app "$arguments""""
   else
-    docker-compose up
+    COMMAND="""docker-compose up"""
   fi
 else
-  # If the docker image does not exist yet, create it
-  if ! docker inspect "$IMAGE_NAME" > /dev/null; then
-    echo "Building $IMAGE_NAME"
-    docker build -t "$IMAGE_NAME" -f "$DOCKERFILE" $APP_PATH
-  fi
-
+  APP_TO_RUN="$1"
   # Concatenate all remaining arguments and put them into quotes
   shift
   arguments=""
   for i in "$@"; do
     arguments="$arguments"'"'"$i"'" '
   done
+  # If the docker image does not exist yet, create it
+  if ! docker inspect "$IMAGE_NAME" > /dev/null; then
+    echo "Building $IMAGE_NAME"
+    docker build -t "$IMAGE_NAME" -f "$DOCKERFILE" $APP_PATH
+  fi
 
   echo "Running $APP_TO_RUN"
 
@@ -45,5 +49,6 @@ else
          "$IMAGE_NAME" \
          "$APP_TO_RUN" "$arguments"
   """
+fi
 
-  bash -c "$COMMAND"
+bash -c "$COMMAND"

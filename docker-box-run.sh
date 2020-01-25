@@ -1,24 +1,29 @@
 #!/usr/bin/env bash
 
-APP_TO_RUN="$(basename $(pwd))"
 SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd -P )"
 
 APP_PATH="."
 DOCKER_COMPOSE_FILE="${APP_PATH}/docker-compose.yml"
 
-# Concatenate all arguments and put them into quotes
-arguments=""
-for i in "$@"; do
-  arguments="$arguments"'"'"$i"'" '
-done
-
 if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
+  # Concatenate all arguments and put them into quotes
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
   if [ -n "${arguments}" ]; then
-    docker-compose run app "$arguments"
+    COMMAND="""docker-compose run --service-ports app "$arguments""""
   else
-    docker-compose up
+    COMMAND="""docker-compose up"""
   fi
 else
+  APP_TO_RUN="$(basename $(pwd))"
+  # Concatenate all arguments and put them into quotes
+  shift
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
   DOCKERFILE="${APP_PATH}/Dockerfile"
   DOCKERFILE_VERSION=$(md5 -q "$DOCKERFILE")
   IMAGE_NAME="${APP_TO_RUN}:${DOCKERFILE_VERSION}"
@@ -42,5 +47,6 @@ else
          "$arguments"
   """
 
-  bash -c "$COMMAND"
 fi
+
+bash -c "$COMMAND"

@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-APP_TO_RUN="$1"
 SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd -P )"
 
 if [ -z ${DOCKER_BOX_APPS_PATH+x} ]; then
@@ -11,20 +10,26 @@ APP_PATH="${DOCKER_BOX_APPS_PATH}/${APP_TO_RUN}"
 DOCKER_COMPOSE_FILE="${APP_PATH}/docker-compose.yml"
 VOLUME_DIR="$(pwd)"
 
-# Concatenate all remaining arguments and put them into quotes
-shift
-arguments=""
-for i in "$@"; do
-  arguments="$arguments"'"'"$i"'" '
-done
-
 if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
+  # Concatenate all remaining arguments and put them into quotes
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
   if [ -n "${arguments}" ]; then
-    docker-compose run app "$arguments"
+    COMMAND="""docker-compose run --service-ports app "$arguments""""
   else
-    docker-compose up
+    COMMAND="""docker-compose up"""
   fi
 else
+  APP_TO_RUN="$1"
+  # Concatenate all remaining arguments and put them into quotes
+  shift
+  arguments=""
+  for i in "$@"; do
+    arguments="$arguments"'"'"$i"'" '
+  done
+
   DOCKERFILE="${APP_PATH}/Dockerfile"
   DOCKERFILE_HASH=$(md5 -q "${DOCKERFILE}")
   DOCKER_BUILD_VERSION=$(md5 -q "${DOCKERFILE_HASH}${DOCKER_COMPOSE_HASH}")
@@ -47,6 +52,6 @@ else
          "$IMAGE_NAME" \
          "$APP_TO_RUN" "$arguments"
   """
-
-  echo bash -c "$COMMAND"
 fi
+
+bash -c "$COMMAND"
