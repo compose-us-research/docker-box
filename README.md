@@ -33,7 +33,7 @@ alias dr="${HOME}/.docker-box/docker-box-run.sh"
 
 ## Usage
 
-There are three different use-cases currently to share data between your 
+There are three different use-cases currently to share data between your
 sandboxed app (= the untrusted thing you want to run) and the host (= your
 computer). If you have installed the three aliases as mentioned above, those
 will match:
@@ -48,7 +48,7 @@ will match:
 box youtube-dl ...
 ```
 
-Would download the URL you passed as argument into the current directory 
+Would download the URL you passed as argument into the current directory
 through `youtube-dl`.
 
 ### 2. Mount a static sandbox directory into `/app`
@@ -66,8 +66,19 @@ downloading into that directory when using the `youtube-dl` docker-box-app.
 dr cargo run --help
 ```
 
-This is useful for development as it mounts the current directory into a 
-container and you can specify, install and setup all necessary development 
+This is useful for development as it mounts the current directory into a
+container and you can specify, install and setup all necessary development
 tools and environment through your Dockerfile.
 
 The image name will be the name of your current working directory.
+
+## Building your own docker-boxed apps
+
+### Using ports
+
+You have two options for using ports with `docker-box`:
+
+1. Use a regular `Dockerfile` and have people use the `DOCKER_OPTIONS`
+environmment variable to add them (for example: `DOCKER_OPTIONS="-p 8000:8000"`)
+2. Use a `docker-compose.yml` and add the ports to the `app` service. It will 
+run your commands with `--service-ports` to make them available.
