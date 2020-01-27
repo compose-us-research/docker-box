@@ -74,11 +74,20 @@ The image name will be the name of your current working directory.
 
 ## Building your own docker-boxed apps
 
+Apps can be built with a `Dockerfile` that contains their installation
+instructions. To make sure the volumes are correctly mounted, always set the
+working directory of the docker container to `/app` by using the `WORKDIR /app`
+directive inside the `Dockerfile`.
+
+You can have a look at the [docker-box-apps
+repository](https://github.com/compose-us-research/docker-box-apps) to see
+examples of how apps are built.
+
 ### Using ports
 
 You have two options for using ports with `docker-box`:
 
 1. Use a regular `Dockerfile` and have people use the `DOCKER_OPTIONS`
-environmment variable to add them (for example: `DOCKER_OPTIONS="-p 8000:8000"`)
-2. Use a `docker-compose.yml` and add the ports to the `app` service. It will 
-run your commands with `--service-ports` to make them available.
+   environmment variable to add them (for example: `DOCKER_OPTIONS="-p 8000:8000"`)
+2. Use a `docker-compose.yml` and add the ports to the `app` service. It will
+   run your commands with `--service-ports` to make them available.
