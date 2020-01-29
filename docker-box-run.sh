@@ -19,7 +19,6 @@ if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
 else
   APP_TO_RUN="$(basename $(pwd))"
   # Concatenate all arguments and put them into quotes
-  shift
   arguments=""
   for i in "$@"; do
     arguments="$arguments"'"'"$i"'" '
