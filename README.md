@@ -2,6 +2,12 @@
 
 Sandbox apps into a docker container.
 
+With docker, you can install and run apps in a sandbox. The commands in this
+repository should help you with that. No need for homebrew or other package
+managers that install dependencies system wide. Make your system safer by not
+installing apps globally. Uninstalling apps and their dependencies is done by
+removing the docker images.
+
 ## Installation
 
 Copy it into your home directory and make it runnable:
