@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd -P )"
+APP_TO_RUN="$1"
+shift
 
 if [ -z ${DOCKER_BOX_APPS_PATH+x} ]; then
   DOCKER_BOX_APPS_PATH="${SCRIPT_PATH}/apps"
@@ -17,14 +19,12 @@ if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
     arguments="$arguments"'"'"$i"'" '
   done
   if [ -n "${arguments}" ]; then
-    COMMAND="""docker-compose run --service-ports app "$arguments""""
+    COMMAND="""docker-compose -f ${DOCKER_COMPOSE_FILE} run --rm --service-ports app "$arguments""""
   else
-    COMMAND="""docker-compose up"""
+    COMMAND="""docker-compose -f ${DOCKER_COMPOSE_FILE} up"""
   fi
 else
-  APP_TO_RUN="$1"
   # Concatenate all remaining arguments and put them into quotes
-  shift
   arguments=""
   for i in "$@"; do
     arguments="$arguments"'"'"$i"'" '
