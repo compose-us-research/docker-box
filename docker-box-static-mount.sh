@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 SCRIPT_PATH="$(cd "$(dirname "$0")"; pwd -P )"
+APP_TO_RUN="$1"
+shift
 
 if [ -z ${DOCKER_BOX_APPS_PATH+x} ]; then
   DOCKER_BOX_APPS_PATH="${SCRIPT_PATH}/apps"
 fi
 
 APP_PATH="${DOCKER_BOX_APPS_PATH}/${APP_TO_RUN}"
-DOCKERFILE="${APP_PATH}/Dockerfile"
-DOCKERFILE_VERSION=$(md5 -q "$DOCKERFILE")
-IMAGE_NAME="${APP_TO_RUN}:${DOCKERFILE_VERSION}"
+DOCKER_COMPOSE_FILE="${APP_PATH}/docker-compose.yml"
 VOLUME_DIR="${SCRIPT_PATH}/sandbox"
 
 if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
@@ -19,18 +19,21 @@ if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
     arguments="$arguments"'"'"$i"'" '
   done
   if [ -n "${arguments}" ]; then
-    COMMAND="""docker-compose run --service-ports app "$arguments""""
+    COMMAND="""docker-compose -f ${DOCKER_COMPOSE_FILE} run --rm --service-ports --volume "${VOLUME_DIR}:/app" app "$arguments""""
   else
-    COMMAND="""docker-compose up"""
+    COMMAND="""docker-compose -f ${DOCKER_COMPOSE_FILE} up"""
   fi
 else
-  APP_TO_RUN="$1"
   # Concatenate all remaining arguments and put them into quotes
-  shift
   arguments=""
   for i in "$@"; do
     arguments="$arguments"'"'"$i"'" '
   done
+
+  DOCKERFILE="${APP_PATH}/Dockerfile"
+  DOCKERFILE_HASH=$(md5 -q "${DOCKERFILE}")
+  DOCKER_BUILD_VERSION=$(md5 -q "${DOCKERFILE_HASH}${DOCKER_COMPOSE_HASH}")
+  IMAGE_NAME="${APP_TO_RUN}:${DOCKER_BUILD_VERSION}"
   # If the docker image does not exist yet, create it
   if ! docker inspect "$IMAGE_NAME" > /dev/null; then
     echo "Building $IMAGE_NAME"
