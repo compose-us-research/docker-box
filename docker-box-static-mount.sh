@@ -32,7 +32,7 @@ else
 
   DOCKERFILE="${APP_PATH}/Dockerfile"
   DOCKERFILE_HASH=$(md5 -q "${DOCKERFILE}")
-  DOCKER_BUILD_VERSION=$(echo "${DOCKERFILE_HASH}${DOCKER_COMPOSE_HASH}" | md5)
+  DOCKER_BUILD_VERSION="${DOCKERFILE_HASH}"
   IMAGE_NAME="${APP_TO_RUN}:${DOCKER_BUILD_VERSION}"
   # If the docker image does not exist yet, create it
   if ! docker inspect "$IMAGE_NAME" > /dev/null; then
