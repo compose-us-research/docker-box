@@ -23,6 +23,7 @@ Set up aliases in `.*rc` file:
 ```
 alias mountbox="${HOME}/.docker-box/docker-box-static-mount.sh"
 alias box="${HOME}/.docker-box/docker-box.sh"
+alias boxed="${HOME}/.docker-box/docker-box-script.sh"
 alias dr="${HOME}/.docker-box/docker-box-run.sh"
 ```
 
@@ -34,19 +35,21 @@ For example:
 ```
 alias mountbox="DOCKER_BOX_APPS_PATH=${HOME}/.docker-box-apps ${HOME}/.docker-box/docker-box-static-mount.sh"
 alias box="DOCKER_BOX_APPS_PATH=${HOME}/.docker-box-apps ${HOME}/.docker-box/docker-box.sh"
+alias boxed="DOCKER_BOX_APPS_PATH=${HOME}/.docker-box-apps ${HOME}/.docker-box/docker-box-script.sh"
 alias dr="${HOME}/.docker-box/docker-box-run.sh"
 ```
 
 ## Usage
 
-There are three different use-cases currently to share data between your
+There are four different use-cases currently to share data between your
 sandboxed app (= the untrusted thing you want to run) and the host (= your
-computer). If you have installed the three aliases as mentioned above, those
+computer). If you have installed the four aliases as mentioned above, those
 will match:
 
 1. Having the current working directory in your container (= `box`)
-2. Have a static mount in your container (= `mountbox`)
-3. Run the current directory like a docker container (for development) (= `dr`)
+2. Having the current working directory in your container and run it non-interactively (= `boxed`)
+3. Have a static mount in your container (= `mountbox`)
+4. Run the current directory like a docker container (for development) (= `dr`)
 
 ### 1. Mount the current working directory into `/app`
 
@@ -57,7 +60,17 @@ box youtube-dl ...
 Would download the URL you passed as argument into the current directory
 through `youtube-dl`.
 
-### 2. Mount a static sandbox directory into `/app`
+### 1. Mount the current working directory into `/app`
+
+```
+boxed pdf-document-feeder my-scanned-document.pdf my-scanned-document-sorted.pdf
+```
+
+Would sort `my-scanned-document.pdf` when you used a PDF feeder without duplex
+to scan it. It will not attach a terminal to it, so it could run, for example, 
+in Automator scripts.
+
+### 3. Mount a static sandbox directory into `/app`
 
 ```
 mountbox youtube-dl ...
@@ -66,7 +79,7 @@ mountbox youtube-dl ...
 This will use the `sandbox` subdirectory below the `docker-box` scripts, thus
 downloading into that directory when using the `youtube-dl` docker-box-app.
 
-### 3. Directly run the current directory with a Dockerfile inside a container
+### 4. Directly run the current directory with a Dockerfile inside a container
 
 ```
 dr cargo run --help
