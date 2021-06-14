@@ -12,7 +12,7 @@ if [ -f "${DOCKER_COMPOSE_FILE}" ]; then
     arguments="$arguments"'"'"$i"'" '
   done
   if [ -n "${arguments}" ]; then
-    COMMAND="""docker-compose run --service-ports app "$arguments""""
+    COMMAND="""docker-compose run --service-ports --use-aliases --rm app "$arguments""""
   else
     COMMAND="""docker-compose up"""
   fi
@@ -38,11 +38,11 @@ else
   # Run the docker command with properly quoted arguments
   COMMAND="""docker run \
          --rm \
-         --name "$APP_TO_RUN" \
+         --name \"$APP_TO_RUN\" \
          ${DOCKER_OPTIONS} \
-         --volume "${VOLUME_DIR}:/app" \
+         --volume \"${VOLUME_DIR}:/app\" \
          -it \
-         "$IMAGE_NAME" \
+         \"$IMAGE_NAME\" \
          "$arguments"
   """
 
